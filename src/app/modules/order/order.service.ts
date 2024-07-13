@@ -9,7 +9,8 @@ const saveOrderIntoDB = async (data: IOrder) => {
 
   try {
     session.startTransaction();
-    const updateOperations = data.products.map(async (item) => {
+
+    for (const item of data.products) {
       const orderedProductId = item.id;
       const orderedQuantity = item.quantity;
 
@@ -38,13 +39,11 @@ const saveOrderIntoDB = async (data: IOrder) => {
         { availability: { quantity: newQuantity, status: newStatus } },
         { session }
       );
-    });
-
-    // Await all updateOperations
-    await Promise.all(updateOperations);
+    }
 
     // Create the order
-    const result = await Order.create([data], { session });
+    const createdOrder = await Order.create([data], { session });
+    const result = createdOrder[0]; // Assuming single order creation
 
     // Commit transaction
     await session.commitTransaction();
@@ -55,7 +54,9 @@ const saveOrderIntoDB = async (data: IOrder) => {
     // Rollback transaction on error
     await session.abortTransaction();
     session.endSession();
-    throw new AppError(500, error as string);
+
+    // Rethrow the error with status code 500
+    throw new AppError(500, (error as string) || "Internal Server Error");
   }
 };
 

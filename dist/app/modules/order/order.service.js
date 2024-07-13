@@ -21,7 +21,7 @@ const saveOrderIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* ()
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
-        const updateOperations = data.products.map((item) => __awaiter(void 0, void 0, void 0, function* () {
+        for (const item of data.products) {
             const orderedProductId = item.id;
             const orderedQuantity = item.quantity;
             const product = yield product_schema_1.Product.findById(orderedProductId).session(session);
@@ -34,11 +34,10 @@ const saveOrderIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* ()
             const newQuantity = product.availability.quantity - orderedQuantity;
             const newStatus = newQuantity === 0 ? "stockOut" : product.availability.status;
             yield product_schema_1.Product.updateOne({ _id: orderedProductId }, { availability: { quantity: newQuantity, status: newStatus } }, { session });
-        }));
-        // Await all updateOperations
-        yield Promise.all(updateOperations);
+        }
         // Create the order
-        const result = yield order_schema_1.Order.create([data], { session });
+        const createdOrder = yield order_schema_1.Order.create([data], { session });
+        const result = createdOrder[0]; // Assuming single order creation
         // Commit transaction
         yield session.commitTransaction();
         session.endSession();
@@ -48,7 +47,8 @@ const saveOrderIntoDB = (data) => __awaiter(void 0, void 0, void 0, function* ()
         // Rollback transaction on error
         yield session.abortTransaction();
         session.endSession();
-        throw new AppError_1.default(500, error);
+        // Rethrow the error with status code 500
+        throw new AppError_1.default(500, error || "Internal Server Error");
     }
 });
 const getAllOrderFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
