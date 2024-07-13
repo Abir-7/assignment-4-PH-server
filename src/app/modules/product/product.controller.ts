@@ -4,11 +4,22 @@ import { productService } from "./product.service";
 import catchAsync from "../../utils/catchAsync";
 
 const getAllProduct: RequestHandler = catchAsync(async (req, res) => {
-  const result = await productService.getAllProductFromDB();
+  const query = req.query;
 
+  const result = await productService.getAllProductFromDB(query);
   sendResponse(res, {
     statusCode: 200,
     message: "All product is fetched successfully.",
+    success: true,
+    data: result,
+  });
+});
+const getAllCategory: RequestHandler = catchAsync(async (req, res) => {
+  const result = await productService.getAllCategoryFromDB();
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "All Category is fetched successfully.",
     success: true,
     data: result,
   });
@@ -67,4 +78,5 @@ export const productController = {
   updateSingleProduct,
   deleteSingleProduct,
   getSingleProduct,
+  getAllCategory,
 };

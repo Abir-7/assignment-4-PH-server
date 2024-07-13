@@ -6,6 +6,7 @@ import { productValidation } from "./product.validation";
 const router = Router();
 
 router.get("/", productController.getAllProduct);
+router.get("/category", productController.getAllProduct);
 router.get("/:id", productController.getSingleProduct);
 router.post(
   "/",

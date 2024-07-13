@@ -10,4 +10,5 @@ export interface IProduct {
   description: string;
   image: string;
   availability: IInStock;
+  rating: string;
 }

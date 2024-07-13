@@ -16,6 +16,7 @@ const productSchema = new Schema<IProduct>({
   image: { type: String, required: [true, "Image is Required"] },
   price: { type: Number, required: [true, "Price is Required"] },
   availability: inStockSchema,
+  rating: { type: String, required: [true, "Rating is Required"] },
 });
 
 productSchema.pre("save", async function (next) {
