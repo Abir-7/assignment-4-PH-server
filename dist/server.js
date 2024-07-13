@@ -15,14 +15,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const config_1 = require("./app/config");
+let server;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield mongoose_1.default.connect(config_1.config.mogodbUri);
-        app_1.default.listen(config_1.config.port, () => {
-            // eslint-disable-next-line no-console
-            console.log(`Example app listening on port  ${config_1.config.port}`);
+        server = app_1.default.listen(config_1.config.port, () => {
+            console.log(`App listening on port ${config_1.config.port}`);
         });
     });
 }
 // eslint-disable-next-line no-console
 main().catch((err) => console.log(err));
+process.on("unhandledRejection", () => {
+    console.log("Unhandled Rejection is detected!!");
+    if (server) {
+        server.close(() => {
+            process.exit(1);
+        });
+    }
+    else {
+        process.exit(1);
+    }
+});
+process.on("uncaughtException", () => {
+    console.log("Uncaught Exception is detected!!");
+    process.exit(1);
+});
