@@ -13,6 +13,7 @@ router.post(
   zodValidation(productValidation.productValidationSchema),
   productController.createSingleProduct
 );
+
 router.put(
   "/:id",
   zodValidation(productValidation.partialProductValidationSchema),
