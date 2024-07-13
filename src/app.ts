@@ -11,7 +11,7 @@ const corsOptions = {
     "https://online-nursery-server-rho.vercel.app",
     "http://localhost:5173",
   ],
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
